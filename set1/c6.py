@@ -20,46 +20,26 @@ def calc_ham_dis(a,b):
 
     return diff
 
-def figure_key_size_2(q):
+def figure_key_size(q):
     lowest_diff=float('inf')
     KEYSIZE = None
 
     for size in range(2,51):
+        diffs=[]
         if size>(len(q)/2): continue
-        for i in range(1,int(len(q)/size)):
-            first_chunk = q[0+i:size+i]
+        for i in range(0,int(len(q)/size), size):
+            first_chunk = q[i:size+i]
             second_chunk = q[size+i:size*2+i]
             diff = calc_ham_dis(first_chunk, second_chunk)
             normalized_diff = diff/size
-            if normalized_diff<lowest_diff:
-                lowest_diff=normalized_diff
-                KEYSIZE=size
-    
-    return KEYSIZE
-
-def figure_key_size(q):
-    lowest_diff = float('inf')
-    best_keysize = None
-    
-    # We will check a range of sizes and use more data for each size
-    for size in range(2, 51):
-        diffs = []
-        # Use multiple segments for each key size to improve accuracy
-        for start in range(0, len(q) - size*2 + 1, size):
-            segment1 = q[start:start+size]
-            segment2 = q[start+size:start+size*2]
-            if len(segment1) == size and len(segment2) == size:
-                diff = calc_ham_dis(segment1, segment2)
-                normalized_diff = diff / size
-                diffs.append(normalized_diff)
+            diffs.append(normalized_diff)
         
-        if diffs:
-            avg_diff = sum(diffs) / len(diffs)
-            if avg_diff < lowest_diff:
-                lowest_diff = avg_diff
-                best_keysize = size
-    
-    return best_keysize
+        avg = sum(diffs) / len(diffs)
+        if avg<lowest_diff:
+            lowest_diff=avg
+            KEYSIZE=size
+
+    return KEYSIZE
 
 def create_block(s,n):
     block=[]
